@@ -8,8 +8,7 @@ public class PetType extends BaseEntity {
         return name;
     }
 
-    public PetType setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 }

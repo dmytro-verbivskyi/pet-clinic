@@ -1,23 +1,31 @@
 package com.dverbivskyi.sfgpetclinic.service.map;
 
+import com.dverbivskyi.sfgpetclinic.model.BaseEntity;
 import com.dverbivskyi.sfgpetclinic.service.CrudService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractMapService<T, ID> implements CrudService<T, ID> {
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
-    protected Map<ID, T> map = Maps.newHashMap();
+public abstract class AbstractMapService<T extends BaseEntity, ID extends Long> implements CrudService<T, ID> {
+
+    protected Map<Long, T> map = Maps.newHashMap();
 
     @Override
     public T findById(ID id) {
         return map.get(id);
     }
 
-    public T save(ID id, T entity) {
-        map.put(id, entity);
+    public T save(T entity) {
+        if (nonNull(entity) && isNull(entity.getId())) {
+            entity.setId(getNextId());
+        }
+        map.put(entity.getId(), entity);
         return entity;
     }
 
@@ -34,5 +42,10 @@ public abstract class AbstractMapService<T, ID> implements CrudService<T, ID> {
     @Override
     public void deleteById(ID id) {
         map.remove(id);
+    }
+
+    private Long getNextId() {
+
+        return Collections.max(map.keySet()) + 1;
     }
 }
